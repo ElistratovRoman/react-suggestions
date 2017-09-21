@@ -1,7 +1,7 @@
 # react-suggestions
 Reactjs component for dadata suggestions
 
-#Example
+# Example
 ## In dev mode
 ```javascript
 yarn
@@ -9,7 +9,7 @@ yarn add react react-dom -P
 API_KEY={ your dadata token } yarn start
 ```
 
-#Install
+# Install
 ```javascript
 yarn add react-suggestions
 ```
@@ -40,4 +40,4 @@ export default class Example extends React.Component {
   min        | number   | 2         | minimum length for init request
   delay      | number   | 0         | debounce delay
 
-## ...other input attributes
+### ...other input attributes
