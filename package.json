@@ -1,6 +1,6 @@
 {
   "name": "react-suggestions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React-component for work with dadata address suggestions",
   "main": "dist/index.js",
   "style": "dist/react-suggestions.css",
