@@ -1,0 +1,37 @@
+{
+  "name": "react-suggestions",
+  "version": "1.0.0",
+  "description": "React-component for work with dadata address suggestions",
+  "main": "dist/index.js",
+  "style": "dist/react-suggestions.css",
+  "scripts": {
+    "start": "API_KEY=$API_KEY webpack-dev-server --config webpack.example.config",
+    "build": "yarn run clean && webpack --config webpack.dist.config",
+    "clean": "rm -rf dist/*"
+  },
+  "keywords": [
+    "react",
+    "suggestions",
+    "dadata"
+  ],
+  "author": "roman.elistratov1@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^2.30.1",
+    "react-hot-loader": "next",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.8.2"
+  },
+  "peerDependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}
