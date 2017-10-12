@@ -132,6 +132,8 @@ var ReactSuggestions = function (_PureComponent) {
       focusedIndex: -1,
       isOpen: false
     }, _this2.loadSuggestions = debounce(function (query, token, count) {
+      var locations = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+
       if (_this2.xhr) {
         _this2.xhr.abort();
       }
@@ -141,7 +143,7 @@ var ReactSuggestions = function (_PureComponent) {
       _this2.xhr.setRequestHeader("Accept", "application/json");
       _this2.xhr.setRequestHeader("Authorization", 'Token ' + token);
       _this2.xhr.setRequestHeader("Content-Type", "application/json");
-      _this2.xhr.send(JSON.stringify({ query: query, count: count }));
+      _this2.xhr.send(JSON.stringify({ query: query, count: count, locations: locations }));
 
       _this2.xhr.onreadystatechange = function () {
         if (_this2.xhr.readyState != 4) {
@@ -201,7 +203,8 @@ var ReactSuggestions = function (_PureComponent) {
           min = _props.min,
           token = _props.token,
           count = _props.count,
-          delay = _props.delay;
+          delay = _props.delay,
+          locations = _props.locations;
 
 
       if (!token) {
@@ -215,7 +218,7 @@ var ReactSuggestions = function (_PureComponent) {
       if (query.length < min) {
         state.suggestions = [];
       } else {
-        this.loadSuggestions(query, token, count);
+        this.loadSuggestions(query, token, count, locations);
       }
 
       this.setState(_extends({}, state));
@@ -334,7 +337,8 @@ var ReactSuggestions = function (_PureComponent) {
           count = _props2.count,
           className = _props2.className,
           delay = _props2.delay,
-          rest = _objectWithoutProperties(_props2, ['query', 'token', 'min', 'count', 'className', 'delay']);
+          locations = _props2.locations,
+          rest = _objectWithoutProperties(_props2, ['query', 'token', 'min', 'count', 'className', 'delay', 'locations']);
 
       var _state2 = this.state,
           query = _state2.query,
@@ -386,11 +390,11 @@ var _temp2 = function () {
     return;
   }
 
-  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/johnblue/dev/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/johnblue/dev/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/johnblue/dev/react-suggestions/src/index.js');
 }();
 
 ;
