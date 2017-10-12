@@ -33,7 +33,7 @@ class ReactSuggestions extends PureComponent {
     }
   }
 
-  loadSuggestions = debounce((query, token, count) => {
+  loadSuggestions = debounce((query, token, count, locations = []) => {
     if (this.xhr) {
       this.xhr.abort()
     }
@@ -43,7 +43,7 @@ class ReactSuggestions extends PureComponent {
     this.xhr.setRequestHeader("Accept", "application/json")
     this.xhr.setRequestHeader("Authorization", `Token ${token}`)
     this.xhr.setRequestHeader("Content-Type", "application/json")
-    this.xhr.send(JSON.stringify({ query, count }))
+    this.xhr.send(JSON.stringify({ query, count, locations }))
 
     this.xhr.onreadystatechange = () => {
       if (this.xhr.readyState != 4) {
@@ -61,7 +61,7 @@ class ReactSuggestions extends PureComponent {
   }, this.props.delay)
 
   handleChange = (evt) => {
-    let { min, token, count, delay } = this.props
+    let { min, token, count, delay, locations } = this.props
 
     if (!token) { return }
 
@@ -71,7 +71,7 @@ class ReactSuggestions extends PureComponent {
     if (query.length < min) {
       state.suggestions = []
     } else {
-      this.loadSuggestions(query, token, count)
+      this.loadSuggestions(query, token, count, locations)
     }
 
     this.setState({ ...state })
@@ -157,7 +157,7 @@ class ReactSuggestions extends PureComponent {
   }
 
   render() {
-    let { query: omit, token, min, count, className, delay, ...rest } = this.props
+    let { query: omit, token, min, count, className, delay, locations, ...rest } = this.props
     let { query, suggestions, isOpen, focusedIndex } = this.state
 
     let wrapperCns = className ? `react-suggestions ${className}` : 'react-suggestions'
