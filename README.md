@@ -39,5 +39,6 @@ export default class Example extends React.Component {
   count      | number   | 10        | suggestions length
   min        | number   | 2         | minimum length for init request
   delay      | number   | 0         | debounce delay
+  locations  | array    | []        | limit the search area
 
 ### ...other input attributes
