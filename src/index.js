@@ -119,7 +119,7 @@ class ReactSuggestions extends PureComponent {
         this.setState({ focusedIndex: result })
       }
 
-      if (evt.which === 13) {
+      if (evt.which === 13 && index !== -1) {
         this.handleSelect(this.state.suggestions[index], index)
       }
     }
