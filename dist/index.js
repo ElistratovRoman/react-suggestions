@@ -277,7 +277,7 @@ var ReactSuggestions = function (_PureComponent) {
           this.setState({ focusedIndex: _result });
         }
 
-        if (evt.which === 13) {
+        if (evt.which === 13 && index !== -1) {
           this.handleSelect(this.state.suggestions[index], index);
         }
       }
