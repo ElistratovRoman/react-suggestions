@@ -127,7 +127,7 @@ var ReactSuggestions = function (_PureComponent) {
     }
 
     return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref = ReactSuggestions.__proto__ || Object.getPrototypeOf(ReactSuggestions)).call.apply(_ref, [this].concat(args))), _this2), _this2.state = {
-      query: _this2.props.query,
+      query: '',
       suggestions: [],
       focusedIndex: -1,
       isOpen: false
@@ -194,6 +194,22 @@ var ReactSuggestions = function (_PureComponent) {
     value: function componentWillMount() {
       if (!this.props.token) {
         console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/');
+      }
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.setState({
+        query: this.props.query
+      });
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.query !== this.props.query) {
+        this.setState({
+          query: nextProps.query
+        });
       }
     }
   }, {
@@ -390,11 +406,11 @@ var _temp2 = function () {
     return;
   }
 
-  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/johnblue/dev/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/alena/Work/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/johnblue/dev/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/alena/Work/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/johnblue/dev/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/alena/Work/react-suggestions/src/index.js');
 }();
 
 ;
