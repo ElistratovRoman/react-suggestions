@@ -21,7 +21,7 @@ class ReactSuggestions extends PureComponent {
   }
 
   state = {
-    query: this.props.query,
+    query: '',
     suggestions: [],
     focusedIndex: -1,
     isOpen: false,
@@ -31,7 +31,21 @@ class ReactSuggestions extends PureComponent {
     if (!this.props.token) {
       console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/')
     }
-  }
+  };
+
+  componentDidMount() {
+    this.setState({
+      query: this.props.query,
+    })
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.query !== this.props.query) {
+      this.setState({
+        query: nextProps.query,
+      })
+    }
+  };
 
   loadSuggestions = debounce((query, token, count, locations = []) => {
     if (this.xhr) {
