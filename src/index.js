@@ -118,7 +118,7 @@ class ReactSuggestions extends PureComponent {
     if ([40, 38, 13].includes(evt.which)) {
       evt.preventDefault()
 
-      let { focusedIndex: index } = this.state
+      let { suggestions, focusedIndex: index } = this.state
       let length = this.props.count - 1
 
       if (evt.which === 40) {
@@ -133,8 +133,8 @@ class ReactSuggestions extends PureComponent {
         this.setState({ focusedIndex: result })
       }
 
-      if (evt.which === 13 && index !== -1) {
-        this.handleSelect(this.state.suggestions[index], index)
+      if (evt.which === 13 && index !== -1 && suggestions[index]) {
+        this.handleSelect(suggestions[index], index)
       }
     }
   }
@@ -153,7 +153,7 @@ class ReactSuggestions extends PureComponent {
   renderSuggestions = () => {
     let { suggestions, focusedIndex } = this.state
 
-    let result = suggestions.map((suggestion, index) => {
+    let result = suggestions.filter((suggestion) => !!suggestion).map((suggestion, index) => {
       let itemCns = index === focusedIndex ? 'focused': ''
 
       return (

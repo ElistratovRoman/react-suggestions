@@ -277,7 +277,9 @@ var ReactSuggestions = function (_PureComponent) {
       if ([40, 38, 13].includes(evt.which)) {
         evt.preventDefault();
 
-        var index = this.state.focusedIndex;
+        var _state = this.state,
+            suggestions = _state.suggestions,
+            index = _state.focusedIndex;
 
         var length = this.props.count - 1;
 
@@ -293,8 +295,8 @@ var ReactSuggestions = function (_PureComponent) {
           this.setState({ focusedIndex: _result });
         }
 
-        if (evt.which === 13 && index !== -1) {
-          this.handleSelect(this.state.suggestions[index], index);
+        if (evt.which === 13 && index !== -1 && suggestions[index]) {
+          this.handleSelect(suggestions[index], index);
         }
       }
     }
@@ -318,12 +320,14 @@ var ReactSuggestions = function (_PureComponent) {
     value: function __renderSuggestions__REACT_HOT_LOADER__() {
       var _this10 = this;
 
-      var _state = this.state,
-          suggestions = _state.suggestions,
-          focusedIndex = _state.focusedIndex;
+      var _state2 = this.state,
+          suggestions = _state2.suggestions,
+          focusedIndex = _state2.focusedIndex;
 
 
-      var result = suggestions.map(function (suggestion, index) {
+      var result = suggestions.filter(function (suggestion) {
+        return !!suggestion;
+      }).map(function (suggestion, index) {
         var itemCns = index === focusedIndex ? 'focused' : '';
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -356,11 +360,11 @@ var ReactSuggestions = function (_PureComponent) {
           locations = _props2.locations,
           rest = _objectWithoutProperties(_props2, ['query', 'token', 'min', 'count', 'className', 'delay', 'locations']);
 
-      var _state2 = this.state,
-          query = _state2.query,
-          suggestions = _state2.suggestions,
-          isOpen = _state2.isOpen,
-          focusedIndex = _state2.focusedIndex;
+      var _state3 = this.state,
+          query = _state3.query,
+          suggestions = _state3.suggestions,
+          isOpen = _state3.isOpen,
+          focusedIndex = _state3.focusedIndex;
 
 
       var wrapperCns = className ? 'react-suggestions ' + className : 'react-suggestions';
@@ -406,11 +410,11 @@ var _temp2 = function () {
     return;
   }
 
-  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/alena/Work/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/alena/Work/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/alena/Work/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
 }();
 
 ;
