@@ -325,9 +325,7 @@ var ReactSuggestions = function (_PureComponent) {
           focusedIndex = _state2.focusedIndex;
 
 
-      var result = suggestions.filter(function (suggestion) {
-        return !!suggestion;
-      }).map(function (suggestion, index) {
+      var result = suggestions.map(function (suggestion, index) {
         var itemCns = index === focusedIndex ? 'focused' : '';
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
