@@ -153,7 +153,7 @@ class ReactSuggestions extends PureComponent {
   renderSuggestions = () => {
     let { suggestions, focusedIndex } = this.state
 
-    let result = suggestions.filter((suggestion) => !!suggestion).map((suggestion, index) => {
+    let result = suggestions.map((suggestion, index) => {
       let itemCns = index === focusedIndex ? 'focused': ''
 
       return (
