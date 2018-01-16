@@ -180,14 +180,14 @@ var ReactSuggestions = function (_PureComponent) {
       var _this5;
 
       return (_this5 = _this2).__onBlurHd__REACT_HOT_LOADER__.apply(_this5, arguments);
-    }, _this2.handleHover = function () {
+    }, _this2.onMouseEnterHd = function () {
       var _this6;
 
-      return (_this6 = _this2).__handleHover__REACT_HOT_LOADER__.apply(_this6, arguments);
-    }, _this2.handleKeyPress = function () {
+      return (_this6 = _this2).__onMouseEnterHd__REACT_HOT_LOADER__.apply(_this6, arguments);
+    }, _this2.onKeyPressHd = function () {
       var _this7;
 
-      return (_this7 = _this2).__handleKeyPress__REACT_HOT_LOADER__.apply(_this7, arguments);
+      return (_this7 = _this2).__onKeyPressHd__REACT_HOT_LOADER__.apply(_this7, arguments);
     }, _this2.handleSelect = function () {
       var _this8;
 
@@ -225,15 +225,12 @@ var ReactSuggestions = function (_PureComponent) {
   }, {
     key: '__onChangeHd__REACT_HOT_LOADER__',
     value: function __onChangeHd__REACT_HOT_LOADER__(event) {
-      event.persist();
-
       var _props = this.props,
           min = _props.min,
           token = _props.token,
           count = _props.count,
           delay = _props.delay,
           locations = _props.locations,
-          onInput = _props.onInput,
           onChange = _props.onChange;
 
 
@@ -252,17 +249,7 @@ var ReactSuggestions = function (_PureComponent) {
       }
 
       this.setState(_extends({}, state), function () {
-        switch (event.type) {
-          case 'input':
-            {
-              if (typeof onInput === 'function') onInput(event);
-            }
-
-          case 'input':
-            {
-              if (typeof onChange === 'function') onChange(event);
-            }
-        }
+        if (typeof onChange === 'function') onChange(event);
       });
     }
   }, {
@@ -289,13 +276,13 @@ var ReactSuggestions = function (_PureComponent) {
       if (typeof onBlur === 'function') onBlur(event);
     }
   }, {
-    key: '__handleHover__REACT_HOT_LOADER__',
-    value: function __handleHover__REACT_HOT_LOADER__(focusedIndex) {
+    key: '__onMouseEnterHd__REACT_HOT_LOADER__',
+    value: function __onMouseEnterHd__REACT_HOT_LOADER__(focusedIndex) {
       this.setState({ focusedIndex: focusedIndex });
     }
   }, {
-    key: '__handleKeyPress__REACT_HOT_LOADER__',
-    value: function __handleKeyPress__REACT_HOT_LOADER__(event) {
+    key: '__onKeyPressHd__REACT_HOT_LOADER__',
+    value: function __onKeyPressHd__REACT_HOT_LOADER__(event) {
       if ([40, 38, 13].includes(event.which)) {
         event.preventDefault();
 
@@ -333,7 +320,7 @@ var ReactSuggestions = function (_PureComponent) {
         isOpen: false
       });
 
-      if (onChange) {
+      if (typeof onChange === 'function') {
         onChange(suggestion, index);
       }
     }
@@ -347,25 +334,25 @@ var ReactSuggestions = function (_PureComponent) {
           focusedIndex = _state2.focusedIndex;
 
 
-      var result = suggestions.map(function (suggestion, index) {
-        var itemCns = index === focusedIndex ? 'focused' : '';
+      var results = suggestions.map(function (suggestion, index) {
+        var itemClassName = index === focusedIndex ? 'focused' : '';
 
         return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'li',
           {
-            className: itemCns,
+            className: itemClassName,
             key: index,
             onMouseDown: function onMouseDown() {
               return _this10.handleSelect(suggestion, index);
             },
             onMouseEnter: function onMouseEnter() {
-              return _this10.handleHover(index);
+              return _this10.onMouseEnterHd(index);
             } },
           suggestion.value
         );
       });
 
-      return result;
+      return results;
     }
   }, {
     key: 'render',
@@ -399,8 +386,8 @@ var ReactSuggestions = function (_PureComponent) {
           onInput: this.onChangeHd,
           onFocus: this.onFocusHd,
           onBlur: this.onBlurHd,
-          onKeyPress: this.handleKeyPress,
-          onKeyDown: this.handleKeyPress
+          onKeyPress: this.onKeyPressHd,
+          onKeyDown: this.onKeyPressHd
         })),
         Boolean(suggestions.length) && isOpen && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'ul',

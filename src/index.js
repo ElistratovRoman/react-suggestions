@@ -78,9 +78,7 @@ class ReactSuggestions extends PureComponent {
   }, this.props.delay)
 
   onChangeHd = (event) => {
-    event.persist()
-
-    let { min, token, count, delay, locations, onInput, onChange } = this.props
+    let { min, token, count, delay, locations, onChange } = this.props
 
     if (!token) { return }
 
@@ -94,17 +92,9 @@ class ReactSuggestions extends PureComponent {
     }
 
     this.setState({ ...state }, () => {
-      switch (event.type) {
-        case 'input': {
-          if (typeof onInput === 'function') onInput(event)
-        }
-
-        case 'input': {
-          if (typeof onChange === 'function') onChange(event)
-        }
-      }
+      if (typeof onChange === 'function') onChange(event)
     })
-  }
+  };
 
   onFocusHd = (event) => {
     const { onFocus } = this.props
@@ -125,11 +115,11 @@ class ReactSuggestions extends PureComponent {
     if (typeof onBlur === 'function') onBlur(event)
   };
 
-  handleHover = (focusedIndex) => {
+  onMouseEnterHd = (focusedIndex) => {
     this.setState({ focusedIndex })
-  }
+  };
 
-  handleKeyPress = (event) => {
+  onKeyPressHd = (event) => {
     if ([40, 38, 13].includes(event.which)) {
       event.preventDefault()
 
@@ -152,7 +142,7 @@ class ReactSuggestions extends PureComponent {
         this.handleSelect(suggestions[index], index)
       }
     }
-  }
+  };
 
   handleSelect = (suggestion, index) => {
     let { onChange } = this.props
@@ -162,28 +152,28 @@ class ReactSuggestions extends PureComponent {
       isOpen: false,
     })
 
-    if (onChange) { onChange(suggestion, index) }
-  }
+    if (typeof onChange === 'function') { onChange(suggestion, index) }
+  };
 
   renderSuggestions = () => {
-    let { suggestions, focusedIndex } = this.state
+    const { suggestions, focusedIndex } = this.state
 
-    let result = suggestions.map((suggestion, index) => {
-      let itemCns = index === focusedIndex ? 'focused': ''
+    const results = suggestions.map((suggestion, index) => {
+      const itemClassName = (index === focusedIndex) ? 'focused': ''
 
       return (
         <li
-          className={ itemCns }
+          className={ itemClassName }
           key={ index }
           onMouseDown={ () => this.handleSelect(suggestion, index)}
-          onMouseEnter={ () => this.handleHover(index) }>
+          onMouseEnter={ () => this.onMouseEnterHd(index) }>
           { suggestion.value }
         </li>
       )
     })
 
-    return result
-  }
+    return results
+  };
 
   render() {
     const { query: omit, token, min, count, className, delay, locations, ...rest } = this.props
@@ -201,8 +191,8 @@ class ReactSuggestions extends PureComponent {
           onInput={ this.onChangeHd }
           onFocus={ this.onFocusHd }
           onBlur={ this.onBlurHd }
-          onKeyPress={ this.handleKeyPress }
-          onKeyDown={ this.handleKeyPress }
+          onKeyPress={ this.onKeyPressHd }
+          onKeyDown={ this.onKeyPressHd }
         />
 
         {(Boolean(suggestions.length) && isOpen) && (
