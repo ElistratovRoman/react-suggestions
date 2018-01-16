@@ -10,22 +10,25 @@ function debounce(fn, delay) {
   }
 }
 
+const ReactSuggestionsProps = {
+  token: '',
+  query: '',
+  min: 2,
+  count: 10,
+  delay: 0,
+}
+
+const initialState = {
+  query: '',
+  suggestions: [],
+  focusedIndex: -1,
+  isOpen: false,
+}
+
 class ReactSuggestions extends PureComponent {
+  static defaultProps = ReactSuggestionsProps;
 
-  static defaultProps = {
-    token: '',
-    query: '',
-    min: 2,
-    count: 10,
-    delay: 0,
-  }
-
-  state = {
-    query: '',
-    suggestions: [],
-    focusedIndex: -1,
-    isOpen: false,
-  }
+  state = initialState;
 
   componentWillMount() {
     if (!this.props.token) {
@@ -74,12 +77,14 @@ class ReactSuggestions extends PureComponent {
     }
   }, this.props.delay)
 
-  handleChange = (evt) => {
-    let { min, token, count, delay, locations } = this.props
+  onChangeHd = (event) => {
+    event.persist()
+
+    let { min, token, count, delay, locations, onInput, onChange } = this.props
 
     if (!token) { return }
 
-    let { value: query } = evt.target
+    let { value: query } = event.target
     let state = { query, isOpen: true }
 
     if (query.length < min) {
@@ -88,52 +93,62 @@ class ReactSuggestions extends PureComponent {
       this.loadSuggestions(query, token, count, locations)
     }
 
-    this.setState({ ...state })
+    this.setState({ ...state }, () => {
+      switch (event.type) {
+        case 'input': {
+          if (typeof onInput === 'function') onInput(event)
+        }
+
+        case 'input': {
+          if (typeof onChange === 'function') onChange(event)
+        }
+      }
+    })
   }
 
-  handleFocus = (evt) => {
-    let { onFocus } = this.props
+  onFocusHd = (event) => {
+    const { onFocus } = this.props
 
     this.setState({ isOpen: true })
 
-    if (onFocus) { onFocus(evt) }
-  }
+    if (typeof onFocus === 'function') onFocus(event)
+  };
 
-  handleBlur = (evt) => {
-    let { onBlur } = this.props
+  onBlurHd = (event) => {
+    const { onBlur } = this.props
 
     this.setState({
       isOpen: false,
       focusedIndex: -1,
     })
 
-    if (onBlur) { onBlur(evt) }
-  }
+    if (typeof onBlur === 'function') onBlur(event)
+  };
 
   handleHover = (focusedIndex) => {
     this.setState({ focusedIndex })
   }
 
-  handleKeyPress = (evt) => {
-    if ([40, 38, 13].includes(evt.which)) {
-      evt.preventDefault()
+  handleKeyPress = (event) => {
+    if ([40, 38, 13].includes(event.which)) {
+      event.preventDefault()
 
       let { suggestions, focusedIndex: index } = this.state
       let length = this.props.count - 1
 
-      if (evt.which === 40) {
+      if (event.which === 40) {
         let result = index === length || index === -1 ? 0 : ++index
 
         this.setState({ focusedIndex: result })
       }
 
-      if (evt.which === 38) {
+      if (event.which === 38) {
         let result = index === 0 || index === -1 ? length : --index
 
         this.setState({ focusedIndex: result })
       }
 
-      if (evt.which === 13 && index !== -1 && suggestions[index]) {
+      if (event.which === 13 && index !== -1 && suggestions[index]) {
         this.handleSelect(suggestions[index], index)
       }
     }
@@ -171,10 +186,10 @@ class ReactSuggestions extends PureComponent {
   }
 
   render() {
-    let { query: omit, token, min, count, className, delay, locations, ...rest } = this.props
-    let { query, suggestions, isOpen, focusedIndex } = this.state
+    const { query: omit, token, min, count, className, delay, locations, ...rest } = this.props
+    const { query, suggestions, isOpen, focusedIndex } = this.state
 
-    let wrapperCns = className ? `react-suggestions ${className}` : 'react-suggestions'
+    const wrapperCns = className ? `react-suggestions ${className}` : 'react-suggestions'
 
     return (
       <div className={ wrapperCns }>
@@ -182,13 +197,17 @@ class ReactSuggestions extends PureComponent {
           { ...rest }
           type="text"
           value={ query }
-          onChange={ this.handleChange }
-          onFocus={ this.handleFocus }
-          onBlur={ this.handleBlur }
+          onChange={ this.onChangeHd }
+          onInput={ this.onChangeHd }
+          onFocus={ this.onFocusHd }
+          onBlur={ this.onBlurHd }
           onKeyPress={ this.handleKeyPress }
-          onKeyDown={ this.handleKeyPress }/>
+          onKeyDown={ this.handleKeyPress }
+        />
 
-        { !!suggestions.length && isOpen && <ul>{ this.renderSuggestions() }</ul> }
+        {(Boolean(suggestions.length) && isOpen) && (
+          <ul>{ this.renderSuggestions() }</ul>
+        )}
       </div>
     )
   }
