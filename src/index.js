@@ -10,8 +10,14 @@ function debounce(fn, delay) {
   }
 }
 
-class ReactSuggestions extends PureComponent {
+const initialState = {
+  query: '',
+  suggestions: [],
+  focusedIndex: -1,
+  isOpen: false,
+}
 
+class ReactSuggestions extends PureComponent {
   static defaultProps = {
     token: '',
     query: '',
@@ -20,15 +26,12 @@ class ReactSuggestions extends PureComponent {
     delay: 0,
   }
 
-  state = {
-    query: '',
-    suggestions: [],
-    focusedIndex: -1,
-    isOpen: false,
-  }
+  constructor(props) {
+    super(props)
+  
+    this.state = initialState
 
-  componentWillMount() {
-    if (!this.props.token) {
+    if (!props.token) {
       console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/')
     }
   };
@@ -44,6 +47,12 @@ class ReactSuggestions extends PureComponent {
       this.setState({
         query: nextProps.query,
       })
+    }
+
+    if (nextProps.token !== this.props.token) {
+      if (!nextProps.token) {
+        console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/')
+      }
     }
   };
 
