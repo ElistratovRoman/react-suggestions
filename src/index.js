@@ -105,18 +105,19 @@ class ReactSuggestions extends PureComponent {
 
     this.setState({ isOpen: true })
 
-    if (onFocus) { onFocus(evt) }
+    if (typeof onFocus === 'function') onFocus(evt)
   }
 
-  handleBlur = (evt) => {
-    let { onBlur } = this.props
+  handleBlur = (event) => {
+    const { onBlur } = this.props
+    const { suggestions } = this.state
 
     this.setState({
       isOpen: false,
       focusedIndex: -1,
     })
 
-    if (onBlur) { onBlur(evt) }
+    if (typeof onBlur === 'function') onBlur(event, suggestions[0])
   }
 
   handleHover = (focusedIndex) => {
@@ -156,7 +157,7 @@ class ReactSuggestions extends PureComponent {
       isOpen: false,
     })
 
-    if (onChange) { onChange(suggestion, index) }
+    if (typeof onChange === 'function') onChange(suggestion, index)
   }
 
   renderSuggestions = () => {
@@ -195,12 +196,13 @@ class ReactSuggestions extends PureComponent {
           onFocus={ this.handleFocus }
           onBlur={ this.handleBlur }
           onKeyPress={ this.handleKeyPress }
-          onKeyDown={ this.handleKeyPress }/>
+          onKeyDown={ this.handleKeyPress }
+        />
 
         { !!suggestions.length && isOpen && <ul>{ this.renderSuggestions() }</ul> }
       </div>
     )
-  }
+  };
 }
 
 export default ReactSuggestions
