@@ -112,26 +112,22 @@ function debounce(fn, delay) {
   };
 }
 
+var initialState = {
+  query: '',
+  suggestions: [],
+  focusedIndex: -1,
+  isOpen: false
+};
+
 var ReactSuggestions = function (_PureComponent) {
   _inherits(ReactSuggestions, _PureComponent);
 
-  function ReactSuggestions() {
-    var _ref;
-
-    var _temp, _this2, _ret;
-
+  function ReactSuggestions(props) {
     _classCallCheck(this, ReactSuggestions);
 
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+    var _this2 = _possibleConstructorReturn(this, (ReactSuggestions.__proto__ || Object.getPrototypeOf(ReactSuggestions)).call(this, props));
 
-    return _ret = (_temp = (_this2 = _possibleConstructorReturn(this, (_ref = ReactSuggestions.__proto__ || Object.getPrototypeOf(ReactSuggestions)).call.apply(_ref, [this].concat(args))), _this2), _this2.state = {
-      query: '',
-      suggestions: [],
-      focusedIndex: -1,
-      isOpen: false
-    }, _this2.loadSuggestions = debounce(function (query, token, count) {
+    _this2.loadSuggestions = debounce(function (query, token, count) {
       var locations = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
 
       if (_this2.xhr) {
@@ -158,45 +154,45 @@ var ReactSuggestions = function (_PureComponent) {
           }
         }
       };
-    }, _this2.props.delay), _this2.handleChange = function () {
-      var _this3;
+    }, _this2.props.delay);
 
-      return (_this3 = _this2).__handleChange__REACT_HOT_LOADER__.apply(_this3, arguments);
-    }, _this2.handleFocus = function () {
-      var _this4;
+    _this2.handleChange = function () {
+      return _this2.__handleChange__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
 
-      return (_this4 = _this2).__handleFocus__REACT_HOT_LOADER__.apply(_this4, arguments);
-    }, _this2.handleBlur = function () {
-      var _this5;
+    _this2.handleFocus = function () {
+      return _this2.__handleFocus__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
 
-      return (_this5 = _this2).__handleBlur__REACT_HOT_LOADER__.apply(_this5, arguments);
-    }, _this2.handleHover = function () {
-      var _this6;
+    _this2.handleBlur = function () {
+      return _this2.__handleBlur__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
 
-      return (_this6 = _this2).__handleHover__REACT_HOT_LOADER__.apply(_this6, arguments);
-    }, _this2.handleKeyPress = function () {
-      var _this7;
+    _this2.handleHover = function () {
+      return _this2.__handleHover__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
 
-      return (_this7 = _this2).__handleKeyPress__REACT_HOT_LOADER__.apply(_this7, arguments);
-    }, _this2.handleSelect = function () {
-      var _this8;
+    _this2.handleKeyPress = function () {
+      return _this2.__handleKeyPress__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
 
-      return (_this8 = _this2).__handleSelect__REACT_HOT_LOADER__.apply(_this8, arguments);
-    }, _this2.renderSuggestions = function () {
-      var _this9;
+    _this2.handleSelect = function () {
+      return _this2.__handleSelect__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
 
-      return (_this9 = _this2).__renderSuggestions__REACT_HOT_LOADER__.apply(_this9, arguments);
-    }, _temp), _possibleConstructorReturn(_this2, _ret);
+    _this2.renderSuggestions = function () {
+      return _this2.__renderSuggestions__REACT_HOT_LOADER__.apply(_this2, arguments);
+    };
+
+    _this2.state = initialState;
+
+    if (!props.token) {
+      console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/');
+    }
+    return _this2;
   }
 
   _createClass(ReactSuggestions, [{
-    key: 'componentWillMount',
-    value: function componentWillMount() {
-      if (!this.props.token) {
-        console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/');
-      }
-    }
-  }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.setState({
@@ -210,6 +206,12 @@ var ReactSuggestions = function (_PureComponent) {
         this.setState({
           query: nextProps.query
         });
+      }
+
+      if (nextProps.token !== this.props.token) {
+        if (!nextProps.token) {
+          console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/');
+        }
       }
     }
   }, {
@@ -247,14 +249,13 @@ var ReactSuggestions = function (_PureComponent) {
 
       this.setState({ isOpen: true });
 
-      if (onFocus) {
-        onFocus(evt);
-      }
+      if (typeof onFocus === 'function') onFocus(evt);
     }
   }, {
     key: '__handleBlur__REACT_HOT_LOADER__',
-    value: function __handleBlur__REACT_HOT_LOADER__(evt) {
+    value: function __handleBlur__REACT_HOT_LOADER__(event) {
       var onBlur = this.props.onBlur;
+      var suggestions = this.state.suggestions;
 
 
       this.setState({
@@ -262,9 +263,7 @@ var ReactSuggestions = function (_PureComponent) {
         focusedIndex: -1
       });
 
-      if (onBlur) {
-        onBlur(evt);
-      }
+      if (typeof onBlur === 'function') onBlur(event, suggestions[0]);
     }
   }, {
     key: '__handleHover__REACT_HOT_LOADER__',
@@ -311,14 +310,12 @@ var ReactSuggestions = function (_PureComponent) {
         isOpen: false
       });
 
-      if (onChange) {
-        onChange(suggestion, index);
-      }
+      if (typeof onChange === 'function') onChange(suggestion, index);
     }
   }, {
     key: '__renderSuggestions__REACT_HOT_LOADER__',
     value: function __renderSuggestions__REACT_HOT_LOADER__() {
-      var _this10 = this;
+      var _this3 = this;
 
       var _state2 = this.state,
           suggestions = _state2.suggestions,
@@ -334,10 +331,10 @@ var ReactSuggestions = function (_PureComponent) {
             className: itemCns,
             key: index,
             onMouseDown: function onMouseDown() {
-              return _this10.handleSelect(suggestion, index);
+              return _this3.handleSelect(suggestion, index);
             },
             onMouseEnter: function onMouseEnter() {
-              return _this10.handleHover(index);
+              return _this3.handleHover(index);
             } },
           suggestion.value
         );
@@ -377,7 +374,8 @@ var ReactSuggestions = function (_PureComponent) {
           onFocus: this.handleFocus,
           onBlur: this.handleBlur,
           onKeyPress: this.handleKeyPress,
-          onKeyDown: this.handleKeyPress })),
+          onKeyDown: this.handleKeyPress
+        })),
         !!suggestions.length && isOpen && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'ul',
           null,
@@ -403,16 +401,18 @@ var _default = ReactSuggestions;
 /* harmony default export */ __webpack_exports__["default"] = (_default);
 ;
 
-var _temp2 = function () {
+var _temp = function () {
   if (typeof __REACT_HOT_LOADER__ === 'undefined') {
     return;
   }
 
-  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(debounce, 'debounce', '/Volumes/Personal/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(initialState, 'initialState', '/Volumes/Personal/react-suggestions/src/index.js');
 
-  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/Roman/Documents/projects/react-suggestions/src/index.js');
+  __REACT_HOT_LOADER__.register(ReactSuggestions, 'ReactSuggestions', '/Volumes/Personal/react-suggestions/src/index.js');
+
+  __REACT_HOT_LOADER__.register(_default, 'default', '/Volumes/Personal/react-suggestions/src/index.js');
 }();
 
 ;
