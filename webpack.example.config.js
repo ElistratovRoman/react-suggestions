@@ -6,12 +6,7 @@ const host = '0.0.0.0'
 const port = '3000'
 
 module.exports = {
-  entry: [
-    'react-hot-loader/patch',
-    `webpack-dev-server/client?http://${host}:${port}`,
-    'webpack/hot/only-dev-server',
-    path.join(__dirname, 'example/src/index.js'),
-  ],
+  entry: [path.join(__dirname, 'example/src/index.js')],
 
   output: {
     path: path.join(__dirname, 'example/dist/index.js'),
@@ -20,7 +15,7 @@ module.exports = {
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -58,11 +53,37 @@ module.exports = {
   },
 
   devServer: {
-    host,
-    port,
-    contentBase: path.resolve(__dirname, 'example/src'),
-    historyApiFallback: true,
+    host: host,
+    port: port,
     hot: true,
+    quiet: true,
+    noInfo: true,
+    compress: true,
+    historyApiFallback: true,
+    disableHostCheck: true,
+    contentBase: path.resolve(__dirname, 'example/src'),
     publicPath: '/',
+
+    stats: {
+      assets: false,
+      cached: false,
+      children: false,
+      chunks: false,
+      chunkModules: false,
+      chunkOrigins: false,
+      chunksSort: 'field',
+      colors: true,
+      errors: true,
+      errorDetails: false,
+      hash: false,
+      modules: false,
+      modulesSort: 'field',
+      publicPath: false,
+      reasons: false,
+      source: false,
+      timings: false,
+      version: false,
+      warnings: true,
+    },
   },
 }
