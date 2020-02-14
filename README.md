@@ -40,5 +40,5 @@ export default class Example extends React.Component {
   min        | number   | 2         | minimum length for init request
   delay      | number   | 0         | debounce delay
   locations  | array    | []        | limit the search area
-
+  onQueryChange | func  | () => {}  | callback is fired on every time the input value changes
 ### ...other input attributes

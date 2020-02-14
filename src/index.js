@@ -1,5 +1,6 @@
-import React, { PureComponent } from 'react'
+import React from 'react'
 import './styles.css'
+
 
 function debounce(fn, delay) {
   let timer = null
@@ -17,13 +18,17 @@ const initialState = {
   isOpen: false,
 }
 
-class ReactSuggestions extends PureComponent {
+class ReactSuggestions extends React.PureComponent {
   static defaultProps = {
     token: '',
     query: '',
     min: 2,
     count: 10,
     delay: 0,
+    onQueryChange: () => {},
+    onFocus: () => {},
+    onBlur: () => {},
+    onChange: () => {},    
   }
 
   constructor(props) {
@@ -42,18 +47,12 @@ class ReactSuggestions extends PureComponent {
     })
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.query !== this.props.query) {
+  componentDidUpdate(prevProps) {
+    if (prevProps.query !== this.props.query) {
       this.setState({
-        query: nextProps.query,
+        query: this.props.query,
       })
-    }
-
-    if (nextProps.token !== this.props.token) {
-      if (!nextProps.token) {
-        console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/')
-      }
-    }
+    }    
   };
 
   loadSuggestions = debounce((query, token, count, locations = []) => {
@@ -74,7 +73,7 @@ class ReactSuggestions extends PureComponent {
       }
 
       if (this.xhr.status == 200) {
-        let response = JSON.parse(this.xhr.response)
+        const response = JSON.parse(this.xhr.response)
 
         if (response && response.suggestions) {
           this.setState({ suggestions: response.suggestions })
@@ -84,12 +83,13 @@ class ReactSuggestions extends PureComponent {
   }, this.props.delay)
 
   handleChange = (evt) => {
-    let { min, token, count, delay, locations } = this.props
+    evt.persist()
+    const { min, token, count, delay, locations, onQueryChange } = this.props
 
     if (!token) { return }
 
-    let { value: query } = evt.target
-    let state = { query, isOpen: true }
+    const { value: query } = evt.target
+    const state = { query, isOpen: true }
 
     if (query.length < min) {
       state.suggestions = []
@@ -97,27 +97,31 @@ class ReactSuggestions extends PureComponent {
       this.loadSuggestions(query, token, count, locations)
     }
 
-    this.setState({ ...state })
+    this.setState({
+      ...state,
+    }, () => onQueryChange(query))
   }
 
   handleFocus = (evt) => {
-    let { onFocus } = this.props
+    const { onFocus } = this.props
 
-    this.setState({ isOpen: true })
+    evt.persist()
 
-    if (typeof onFocus === 'function') onFocus(evt)
+    this.setState({
+      isOpen: true,
+    }, () => onFocus(evt))
   }
 
-  handleBlur = (event) => {
+  handleBlur = (evt) => {
     const { onBlur } = this.props
     const { suggestions } = this.state
+    
+    evt.persist()
 
     this.setState({
       isOpen: false,
       focusedIndex: -1,
-    })
-
-    if (typeof onBlur === 'function') onBlur(event, suggestions[0])
+    }, () => onBlur(evt))
   }
 
   handleHover = (focusedIndex) => {
@@ -125,20 +129,22 @@ class ReactSuggestions extends PureComponent {
   }
 
   handleKeyPress = (evt) => {
+    evt.persist()
+
     if ([40, 38, 13].includes(evt.which)) {
       evt.preventDefault()
 
-      let { suggestions, focusedIndex: index } = this.state
-      let length = this.props.count - 1
+      const { suggestions, focusedIndex: index } = this.state
+      const length = this.props.count - 1
 
       if (evt.which === 40) {
-        let result = index === length || index === -1 ? 0 : ++index
+        const result = index === length || index === -1 ? 0 : ++index
 
         this.setState({ focusedIndex: result })
       }
 
       if (evt.which === 38) {
-        let result = index === 0 || index === -1 ? length : --index
+        const result = index === 0 || index === -1 ? length : --index
 
         this.setState({ focusedIndex: result })
       }
@@ -150,21 +156,19 @@ class ReactSuggestions extends PureComponent {
   }
 
   handleSelect = (suggestion, index) => {
-    let { onChange } = this.props
+    const { onChange } = this.props
 
     this.setState({
       query: suggestion.value,
       isOpen: false,
-    })
-
-    if (typeof onChange === 'function') onChange(suggestion, index)
+    }, () => onChange(suggestion, index))
   }
 
   renderSuggestions = () => {
-    let { suggestions, focusedIndex } = this.state
+    const { suggestions, focusedIndex } = this.state
 
-    let result = suggestions.map((suggestion, index) => {
-      let itemCns = index === focusedIndex ? 'focused': ''
+    const result = suggestions.map((suggestion, index) => {
+      const itemCns = index === focusedIndex ? 'focused': ''
 
       return (
         <li
@@ -181,10 +185,10 @@ class ReactSuggestions extends PureComponent {
   }
 
   render() {
-    let { query: omit, token, min, count, className, delay, locations, ...rest } = this.props
-    let { query, suggestions, isOpen, focusedIndex } = this.state
+    const { query: omit, token, min, count, className, delay, locations, onQueryChange, ...rest } = this.props
+    const { query, suggestions, isOpen, focusedIndex } = this.state
 
-    let wrapperCns = className ? `react-suggestions ${className}` : 'react-suggestions'
+    const wrapperCns = className ? `react-suggestions ${className}` : 'react-suggestions'
 
     return (
       <div className={ wrapperCns }>

@@ -1,20 +1,22 @@
-import React, { PureComponent } from 'react'
+import React from 'react'
+import { hot } from 'react-hot-loader'
 import ReactSuggestions from 'react-suggestions'
+
 import 'react-suggestions/react-suggestions.css'
 import './styles.css'
 
-class Example extends PureComponent {
 
+class Example extends React.PureComponent {
   state = {
     suggestion: null,
     index: null,
   }
 
-  handleChange = (suggestion, index, evt) => {
+  handleChange = (suggestion, index) => {
     this.setState({
       suggestion,
       index,
-    })
+    })    
   }
 
   render() {
@@ -49,4 +51,4 @@ class Example extends PureComponent {
   }
 }
 
-export default Example
+export default hot(module)(Example)
