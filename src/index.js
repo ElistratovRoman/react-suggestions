@@ -39,13 +39,13 @@ class ReactSuggestions extends React.PureComponent {
     if (!props.token) {
       console.warn('react-suggestions: You need pass dadata api-key to props. See https://dadata.ru/api/suggest/')
     }
-  };
+  }
 
   componentDidMount() {
     this.setState({
       query: this.props.query,
     })
-  };
+  }
 
   componentDidUpdate(prevProps) {
     if (prevProps.query !== this.props.query) {
@@ -53,9 +53,11 @@ class ReactSuggestions extends React.PureComponent {
         query: this.props.query,
       })
     }    
-  };
+  }
 
-  loadSuggestions = debounce((query, token, count, locations = []) => {
+  createConnection = () => {
+    const { token } = this.props
+
     if (this.xhr) {
       this.xhr.abort()
     }
@@ -65,6 +67,11 @@ class ReactSuggestions extends React.PureComponent {
     this.xhr.setRequestHeader("Accept", "application/json")
     this.xhr.setRequestHeader("Authorization", `Token ${token}`)
     this.xhr.setRequestHeader("Content-Type", "application/json")
+  }
+
+  loadSuggestions = debounce(({ query, count, locations = [] }) => {
+    this.createConnection()
+
     this.xhr.send(JSON.stringify({ query, count, locations }))
 
     this.xhr.onreadystatechange = () => {
@@ -84,9 +91,8 @@ class ReactSuggestions extends React.PureComponent {
 
   handleChange = (evt) => {
     evt.persist()
-    const { min, token, count, delay, locations, onQueryChange } = this.props
 
-    if (!token) { return }
+    const { min, count, delay, locations, onQueryChange } = this.props
 
     const { value: query } = evt.target
     const state = { query, isOpen: true }
@@ -94,12 +100,10 @@ class ReactSuggestions extends React.PureComponent {
     if (query.length < min) {
       state.suggestions = []
     } else {
-      this.loadSuggestions(query, token, count, locations)
+      this.loadSuggestions({ query, count, locations })
     }
 
-    this.setState({
-      ...state,
-    }, () => onQueryChange(query))
+    this.setState({ ...state }, () => onQueryChange(query))
   }
 
   handleFocus = (evt) => {
@@ -129,39 +133,63 @@ class ReactSuggestions extends React.PureComponent {
   }
 
   handleKeyPress = (evt) => {
-    evt.persist()
+    const { suggestions } = this.state
+    const length = this.props.count - 1
 
-    if ([40, 38, 13].includes(evt.which)) {
+    let idx = this.state.focusedIndex
+
+    if (evt.which === 40) {
       evt.preventDefault()
 
-      const { suggestions, focusedIndex: index } = this.state
-      const length = this.props.count - 1
+      this.setState({
+        focusedIndex: (idx === length || idx === -1) ? 0 : ++idx,
+      })
+    }
 
-      if (evt.which === 40) {
-        const result = index === length || index === -1 ? 0 : ++index
+    if (evt.which === 38) {
+      evt.preventDefault()
 
-        this.setState({ focusedIndex: result })
-      }
+      this.setState({
+        focusedIndex: (idx === 0 || idx === -1) ? length : --idx,
+      })
+    }
 
-      if (evt.which === 38) {
-        const result = index === 0 || index === -1 ? length : --index
+    if (evt.which === 13 && idx !== -1 && suggestions[idx]) {
+      evt.preventDefault()
 
-        this.setState({ focusedIndex: result })
-      }
-
-      if (evt.which === 13 && index !== -1 && suggestions[index]) {
-        this.handleSelect(suggestions[index], index)
-      }
+      this.handleSelect(suggestions[idx], idx)
     }
   }
 
   handleSelect = (suggestion, index) => {
-    const { onChange } = this.props
+    const { locations, onChange } = this.props
 
-    this.setState({
+    this.createConnection()
+
+    this.xhr.send(JSON.stringify({
       query: suggestion.value,
-      isOpen: false,
-    }, () => onChange(suggestion, index))
+      count: 1,
+      locations,
+    }))
+
+    this.xhr.onreadystatechange = () => {
+      if (this.xhr.readyState != 4) {
+        return
+      }
+
+      if (this.xhr.status == 200) {
+        const response = JSON.parse(this.xhr.response)
+
+        if (response && response.suggestions) {
+          const selected = response.suggestions[0]
+
+          this.setState({
+            query: selected.value,
+            isOpen: false,
+          }, () => onChange(selected, index))
+        }
+      }
+    }
   }
 
   renderSuggestions = () => {
@@ -186,7 +214,7 @@ class ReactSuggestions extends React.PureComponent {
 
   render() {
     const { query: omit, token, min, count, className, delay, locations, onQueryChange, ...rest } = this.props
-    const { query, suggestions, isOpen, focusedIndex } = this.state
+    const { query, suggestions, isOpen } = this.state
 
     const wrapperCns = className ? `react-suggestions ${className}` : 'react-suggestions'
 
@@ -206,7 +234,7 @@ class ReactSuggestions extends React.PureComponent {
         { !!suggestions.length && isOpen && <ul>{ this.renderSuggestions() }</ul> }
       </div>
     )
-  };
+  }
 }
 
 export default ReactSuggestions
